@@ -1,0 +1,7 @@
+node_modules
+!node_modules/@oclif/core/
+!node_modules/semver/
+!node_modules/lru-cache/
+!node_modules/yallist
+!node_modules/chalk
+!node_modules/ansi-styles

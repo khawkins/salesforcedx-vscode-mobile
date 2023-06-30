@@ -52,8 +52,11 @@
     "test-coverage": "node ./out/test/runTest.js --coverage",
     "prettier:write": "prettier --write \"src/**/*.{ts, js}\"",
     "prettier:verify": "prettier --list-different \"src/**/*.{ts, js}\"",
-    "bundle:extension": "esbuild ./src/extension.ts  --bundle --outdir=out --format=cjs --target=es2020 --platform=node --external:vscode --external:@oclif/core --minify --sourcemap",
-    "vscode:prepublish": "npm run clean && npm run bundle:extension"
+    "vscode:prepublish": "npm run esbuild-base",
+    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --target=es2020 --external:vscode --external:@oclif/core --format=cjs --platform=node",
+    "esbuild": "npm run esbuild-base -- --sourcemap",
+    "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
+    "test-compile": "tsc -p ./"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
