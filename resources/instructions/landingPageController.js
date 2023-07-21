@@ -83,6 +83,7 @@ function rerenderLandingPage() {
                     );
                     cardDivElement.appendChild(cardTypeElement);
                     console.log(`${titleText} is a 'mcf/timedList' component`);
+                    addMcfListItems(cardComponentSubComponents, cardDivElement);
                     break;
             }
 
@@ -91,8 +92,11 @@ function rerenderLandingPage() {
             cardContainerElement.appendChild(cardDivElement);
         }
     } else {
-        // TODO: Add 'no cards' logic/UX.
-        console.log('No cards found!');
+        // No cards configured.
+        const noCardsElement = createEmptyListElement();
+        const cardContainerElement =
+            document.getElementsByClassName('card-container')[0];
+        cardContainerElement.appendChild(noCardsElement);
     }
 }
 
@@ -115,7 +119,9 @@ function addMcfListItems(cardComponentSubComponents, cardDivElement) {
     for (displayField of [
         { type: 'mainField', display: 'Main field' },
         { type: 'subField1', display: 'Subfield' },
-        { type: 'subField2', display: 'Subfield' }
+        { type: 'subField2', display: 'Subfield' },
+        { type: 'startTime', display: 'Start time field' },
+        { type: 'endTime', display: 'End time field' }
     ]) {
         if (
             componentProperties.fieldMap &&
@@ -155,9 +161,23 @@ function addMcfListItems(cardComponentSubComponents, cardDivElement) {
                 document.createTextNode(`label: ${swipeActionConfig.label}`)
             );
             const swipeActionConfigValueElement = document.createElement('p');
-            swipeActionConfigValueElement.appendChild(
-                document.createTextNode(`value: ${swipeActionConfig.value}`)
-            );
+            switch (swipeAction) {
+                case 'map':
+                    swipeActionConfigValueElement.appendChild(
+                        document.createTextNode(
+                            `address: ${swipeActionConfig.value.address}`
+                        )
+                    );
+                    break;
+                case 'call':
+                case 'email':
+                    swipeActionConfigValueElement.appendChild(
+                        document.createTextNode(
+                            `value: ${swipeActionConfig.value}`
+                        )
+                    );
+                    break;
+            }
             cardDivElement.appendChild(swipeActionHeaderElement);
             cardDivElement.appendChild(swipeActionConfigLabelElement);
             cardDivElement.appendChild(swipeActionConfigValueElement);
@@ -181,4 +201,14 @@ function addGlobalActionItems(cardComponentSubComponents, cardDivElement) {
         );
         cardDivElement.appendChild(actionApiNameElement);
     }
+}
+
+function createEmptyListElement() {
+    const noCardsElement = document.createElement('p');
+    noCardsElement.appendChild(
+        document.createTextNode(
+            "No landing page cards have been configured. Click 'Add' to start configuring cards."
+        )
+    );
+    return noCardsElement;
 }

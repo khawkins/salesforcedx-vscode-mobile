@@ -15,8 +15,8 @@ const JS_CONTROLLER_PATH = 'resources/instructions/landingPageController.js';
 const JS_CONTROLLER_PATH_DEMARCATOR = '--- LANDING_PAGE_CONTROLLER_SRC ---';
 const LANDING_PAGE_VIEW_TYPE = 'landingPageView';
 const STATIC_RESOURCES_PATH = '/force-app/main/default/staticresources';
-// const LANDING_PAGE_DEFAULT_FILENAME = 'landing_page_default.json';
-const LANDING_PAGE_DEFAULT_FILENAME = 'landing_page_retail_execution.json';
+const LANDING_PAGE_FILENAME = 'landing_page_default.json';
+const LANDING_PAGE_TEMPLATE_PATH = 'resources/landing_page_template.json';
 
 export class LandingPageWebviewProvider {
     extensionUri: vscode.Uri;
@@ -75,17 +75,22 @@ export class LandingPageWebviewProvider {
             const landingPagePath = path.join(
                 workspacePath,
                 STATIC_RESOURCES_PATH,
-                LANDING_PAGE_DEFAULT_FILENAME
+                LANDING_PAGE_FILENAME
             );
-            if (fs.existsSync(landingPagePath)) {
-                const landingPageJsonString = fs.readFileSync(landingPagePath, {
-                    encoding: 'utf-8'
-                });
-                panel.webview.postMessage({
-                    command: 'importLandingPage',
-                    payload: JSON.parse(landingPageJsonString)
-                });
-            }
+            const landingPageTemplatePath = vscode.Uri.joinPath(
+                this.extensionUri,
+                LANDING_PAGE_TEMPLATE_PATH
+            ).fsPath;
+            const existingPath = fs.existsSync(landingPagePath)
+                ? landingPagePath
+                : landingPageTemplatePath;
+            const landingPageJsonString = fs.readFileSync(existingPath, {
+                encoding: 'utf-8'
+            });
+            panel.webview.postMessage({
+                command: 'importLandingPage',
+                payload: JSON.parse(landingPageJsonString)
+            });
         }
     }
 
