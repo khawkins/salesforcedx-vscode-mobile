@@ -34,7 +34,12 @@
     "commands": [
       {
         "command": "salesforcedx-vscode-offline-app.onboardingWizard",
-        "title": "%extension.command.title%",
+        "title": "%extension.command.wizard.title%",
+        "category": "%extension.command.category%"
+      },
+      {
+        "command": "salesforcedx-vscode-offline-app.landingPage",
+        "title": "%extension.command.landingPage.title%",
         "category": "%extension.command.category%"
       }
     ]

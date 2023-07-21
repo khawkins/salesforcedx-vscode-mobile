@@ -8,6 +8,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { LandingPageWebviewProvider } from './commands/landingPageCommand2';
 import { TemplateChooserCommand } from './commands/templateChooserCommand';
 import { BriefcaseCommand } from './commands/briefcaseCommand';
 import { DeployToOrgCommand } from './commands/deployToOrgCommand';
@@ -18,6 +19,7 @@ import { InstructionsWebviewProvider } from './webviews';
 const wizardCommand = 'salesforcedx-vscode-offline-app.onboardingWizard';
 const onboardingWizardStateKey =
     'salesforcedx-vscode-offline-app.onboardingWizard.projectCreationState';
+const landingPageCommand = 'salesforcedx-vscode-offline-app.landingPage';
 
 enum OnboardingWizardState {
     projectConfigured
@@ -90,6 +92,13 @@ export function activate(context: vscode.ExtensionContext) {
             }
         }
     );
+
+    vscode.commands.registerCommand(landingPageCommand, async () => {
+        const landingPageProvider = new LandingPageWebviewProvider(
+            context.extensionUri
+        );
+        landingPageProvider.showLandingPageWebview();
+    });
 }
 
 // This method is called when your extension is deactivated
