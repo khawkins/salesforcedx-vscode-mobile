@@ -5,6 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Landing Page Configuration</title>
         <style>
+            body {
+                max-width: 640px;
+            }
+
             .card-container {
                 display: grid;
                 grid-template-columns: auto;
@@ -15,15 +19,86 @@
                 border: 1px solid #fff;
                 padding: 10px;
             }
+
+            .modal-container {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+            }
+
+            .modal-content {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                border: 1px solid #fff;
+                padding: 20px;
+                min-width: 300px;
+                max-width: 500px;
+            }
+
+            .modal-content .centering-box {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .modal-content .centering-box h2 {
+                margin-top: 0px;
+            }
+
+            .action-links {
+                margin-bottom: 10px;
+            }
         </style>
     </head>
 
     <body>
-        <div class="card-container">
-            <!-- <div class="card">
-                <h2>Card 1</h2>
-                <p>This is the content of card 1.</p>
-            </div> -->
+        <h1>Landing Page Configuration</h1>
+        <div class="action-links">
+            <a href="#">Add card...</a>
+            <a id="lnkOpenTemplate" href="#">Open template...</a>
+        </div>
+        <div id="divLandingPageCards" class="card-container"></div>
+        <div class="modal-container" id="divOpenTemplate">
+            <div class="modal-content">
+                <div class="centering-box">
+                    <h2>Open landing page template</h2>
+                    <form>
+                        <p>
+                            <label for="selTemplateTypes">
+                                Choose the template to open:
+                            </label>
+                        </p>
+                        <p>
+                            <select id="selTemplateTypes" required>
+                                <option value="default">Default</option>
+                                <option value="case_management">
+                                    Case Management
+                                </option>
+                                <option value="healthcare">Healthcare</option>
+                                <option value="retail_execution">
+                                    Retail Execution
+                                </option>
+                            </select>
+                        </p>
+
+                        <div class="button-container">
+                            <button type="button" id="btnOpenTemplate">
+                                Open
+                            </button>
+                            <button type="button" id="btnCancelOpenTemplate">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
         <script src="--- LANDING_PAGE_CONTROLLER_SRC ---"></script>
     </body>

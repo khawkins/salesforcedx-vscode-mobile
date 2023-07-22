@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2023, salesforce.com, inc.
+ * All rights reserved.
+ * SPDX-License-Identifier: MIT
+ * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/MIT
+ */
+
+const vscode = acquireVsCodeApi();
+
 let landingPage = {};
 
 window.addEventListener('message', (event) => {
@@ -11,6 +20,8 @@ window.addEventListener('message', (event) => {
 });
 
 function rerenderLandingPage() {
+    const cardContainerElement = document.getElementById('divLandingPageCards');
+    cardContainerElement.innerHTML = '';
     if (
         this.landingPage &&
         this.landingPage.view &&
@@ -35,7 +46,7 @@ function rerenderLandingPage() {
             cardDivElement.setAttributeNode(classAttr);
 
             // Card title
-            const cardTitleElement = document.createElement('h1');
+            const cardTitleElement = document.createElement('h2');
             let titleText;
             if (cardComponent.properties && cardComponent.properties.label) {
                 titleText = cardComponent.properties.label;
@@ -46,7 +57,7 @@ function rerenderLandingPage() {
             cardDivElement.appendChild(cardTitleElement);
 
             // Different card types will have different fields.
-            const cardTypeHeaderElement = document.createElement('h2');
+            const cardTypeHeaderElement = document.createElement('h3');
             cardTypeHeaderElement.appendChild(document.createTextNode('Type'));
             cardDivElement.appendChild(cardTypeHeaderElement);
             const cardComponentSubComponents =
@@ -87,15 +98,11 @@ function rerenderLandingPage() {
                     break;
             }
 
-            const cardContainerElement =
-                document.getElementsByClassName('card-container')[0];
             cardContainerElement.appendChild(cardDivElement);
         }
     } else {
         // No cards configured.
         const noCardsElement = createEmptyListElement();
-        const cardContainerElement =
-            document.getElementsByClassName('card-container')[0];
         cardContainerElement.appendChild(noCardsElement);
     }
 }
@@ -104,7 +111,7 @@ function addMcfListItems(cardComponentSubComponents, cardDivElement) {
     const componentProperties = cardComponentSubComponents.properties;
 
     // Object API Name
-    const objectApiNameHeaderElement = document.createElement('h2');
+    const objectApiNameHeaderElement = document.createElement('h3');
     objectApiNameHeaderElement.appendChild(
         document.createTextNode('Object API Name')
     );
@@ -127,7 +134,7 @@ function addMcfListItems(cardComponentSubComponents, cardDivElement) {
             componentProperties.fieldMap &&
             componentProperties.fieldMap[displayField.type]
         ) {
-            const fieldMapHeaderElement = document.createElement('h2');
+            const fieldMapHeaderElement = document.createElement('h3');
             fieldMapHeaderElement.appendChild(
                 document.createTextNode(displayField.display)
             );
@@ -144,13 +151,13 @@ function addMcfListItems(cardComponentSubComponents, cardDivElement) {
 
     // Swipe actions
     if (componentProperties.swipeActions) {
-        const swipeActionsHeaderElement = document.createElement('h2');
+        const swipeActionsHeaderElement = document.createElement('h3');
         swipeActionsHeaderElement.appendChild(
             document.createTextNode('Swipe Action(s)')
         );
         cardDivElement.appendChild(swipeActionsHeaderElement);
         for (swipeAction of Object.keys(componentProperties.swipeActions)) {
-            const swipeActionHeaderElement = document.createElement('h3');
+            const swipeActionHeaderElement = document.createElement('h4');
             swipeActionHeaderElement.appendChild(
                 document.createTextNode(swipeAction)
             );
@@ -189,7 +196,7 @@ function addGlobalActionItems(cardComponentSubComponents, cardDivElement) {
     const globalActionsList =
         cardComponentSubComponents.regions.components.components;
     for (globalAction of globalActionsList) {
-        const globalActionHeaderElement = document.createElement('h2');
+        const globalActionHeaderElement = document.createElement('h3');
         globalActionHeaderElement.appendChild(
             document.createTextNode('Action Item')
         );
@@ -207,8 +214,34 @@ function createEmptyListElement() {
     const noCardsElement = document.createElement('p');
     noCardsElement.appendChild(
         document.createTextNode(
-            "No landing page cards have been configured. Click 'Add' to start configuring cards."
+            "No landing page cards have been configured. Click 'Add'" +
+                " to start configuring cards, or 'Open Template' to start" +
+                ' with a pre-configured landing page experience.'
         )
     );
     return noCardsElement;
+}
+
+const btnOpenTemplate = document.getElementById('btnOpenTemplate');
+btnOpenTemplate.addEventListener('click', () => {
+    const selTemplateTypes = document.getElementById('selTemplateTypes');
+    const selectedValue = selTemplateTypes.value;
+    vscode.postMessage({ openTemplateId: selectedValue });
+    toggleOpenTemplateModalVisibility(false);
+});
+
+const btnCancelOpenTemplate = document.getElementById('btnCancelOpenTemplate');
+btnCancelOpenTemplate.addEventListener('click', () => {
+    toggleOpenTemplateModalVisibility(false);
+});
+
+const lnkOpenTemplate = document.getElementById('lnkOpenTemplate');
+lnkOpenTemplate.addEventListener('click', () => {
+    toggleOpenTemplateModalVisibility(true);
+});
+
+function toggleOpenTemplateModalVisibility(visible) {
+    const displayValue = visible ? 'block' : 'none';
+    const divOpenTemplate = document.getElementById('divOpenTemplate');
+    divOpenTemplate.style.display = displayValue;
 }
