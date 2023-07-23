@@ -7,13 +7,13 @@
 
 const vscode = acquireVsCodeApi();
 
-let landingPage = {};
+const topLevel = this;
 
 window.addEventListener('message', (event) => {
     const message = event.data;
     switch (message.command) {
         case 'importLandingPage':
-            this.landingPage = message.payload;
+            topLevel.landingPage = message.payload;
             rerenderLandingPage();
             break;
     }
@@ -22,22 +22,23 @@ window.addEventListener('message', (event) => {
 function rerenderLandingPage() {
     const cardContainerElement = document.getElementById('divLandingPageCards');
     cardContainerElement.innerHTML = '';
+    const landingPage = topLevel.landingPage;
     if (
-        this.landingPage &&
-        this.landingPage.view &&
-        this.landingPage.view.regions &&
-        this.landingPage.view.regions.components &&
-        this.landingPage.view.regions.components.components &&
-        this.landingPage.view.regions.components.components.length > 0 &&
-        this.landingPage.view.regions.components.components[0].regions &&
-        this.landingPage.view.regions.components.components[0].regions
+        landingPage &&
+        landingPage.view &&
+        landingPage.view.regions &&
+        landingPage.view.regions.components &&
+        landingPage.view.regions.components.components &&
+        landingPage.view.regions.components.components.length > 0 &&
+        landingPage.view.regions.components.components[0].regions &&
+        landingPage.view.regions.components.components[0].regions
             .components &&
-        this.landingPage.view.regions.components.components[0].regions
+        landingPage.view.regions.components.components[0].regions
             .components.components &&
-        this.landingPage.view.regions.components.components[0].regions
+        landingPage.view.regions.components.components[0].regions
             .components.components.length > 0
     ) {
-        for (cardComponent of this.landingPage.view.regions.components
+        for (cardComponent of landingPage.view.regions.components
             .components[0].regions.components.components) {
             // Create card div.
             const cardDivElement = document.createElement('div');
@@ -240,8 +241,126 @@ lnkOpenTemplate.addEventListener('click', () => {
     toggleOpenTemplateModalVisibility(true);
 });
 
+const lnkAddCard = document.getElementById('lnkAddCard');
+lnkAddCard.addEventListener('click', () => {
+    toggleAddCardModalVisibility(true);
+});
+
+const btnCancelAddCard = document.getElementById('btnCancelAddCard');
+btnCancelAddCard.addEventListener('click', () => {
+    toggleAddCardModalVisibility(false);
+});
+
+const divCardTypeGlobal = document.getElementById('divCardTypeGlobal');
+const divCardTypeList = document.getElementById('divCardTypeList');
+const divCardTypeTimedList = document.getElementById('divCardTypeTimedList');
+const selCardTypes = document.getElementById('selCardTypes');
+selCardTypes.addEventListener('change', () => {
+    switch (selCardTypes.value) {
+        case 'global':
+            divCardTypeGlobal.style.display = 'block';
+            divCardTypeList.style.display = 'none';
+            divCardTypeTimedList.style.display = 'none';
+            break;
+        case 'list':
+            divCardTypeGlobal.style.display = 'none';
+            divCardTypeList.style.display = 'block';
+            divCardTypeTimedList.style.display = 'none';
+            break;
+        case 'timedList':
+            divCardTypeGlobal.style.display = 'none';
+            divCardTypeList.style.display = 'none';
+            divCardTypeTimedList.style.display = 'block';
+            break;
+        default:
+            divCardTypeGlobal.style.display = 'none';
+            divCardTypeList.style.display = 'none';
+            divCardTypeTimedList.style.display = 'none';
+            break;
+    }
+});
+
+const btnAddCard = document.getElementById('btnAddCard');
+btnAddCard.addEventListener('click', () => {
+    for (cardType of [
+        { element: divCardTypeGlobal, method: addGlobalCard },
+        { element: divCardTypeList, method: addListCard },
+        { element: divCardTypeTimedList, method: addTimedListCard }
+    ]) {
+        if (cardType.element.style.display === 'block') {
+            cardType.method();
+            break;
+        }
+    }
+    toggleAddCardModalVisibility(false);
+});
+
+function addGlobalCard() {
+    const landingPage = topLevel.landingPage;
+    console.log(`Original landingPage: ${JSON.stringify(landingPage)}`);
+    const newCard = createCardTemplateObj();
+    newCard.name = 'global_actions';
+    newCard.properties.label = 'Global Actions';
+    newCard.regions.components.components[0].definition = 'mcfp/actionList';
+    newCard.regions.components.components[0].name = 'actions_list';
+    newCard.regions.components.components[0].regions.components.components.push(
+        {
+            definition: 'mcfp/actionItem',
+            name: 'global_action',
+            properties: {
+                apiName: document.getElementById('txtGlobalActionApi1').value
+            },
+            regions: {}
+        }
+    );
+    landingPage.view.regions.components.components[0].regions.components.components.push(
+        newCard
+    );
+    console.log(`Resultant landingPage: ${JSON.stringify(landingPage, null, 2)}`);
+}
+
+function addListCard() {}
+
+function addTimedListCard() {}
+
 function toggleOpenTemplateModalVisibility(visible) {
+    toggleModalVisibility('divOpenTemplate', visible);
+}
+
+function toggleAddCardModalVisibility(visible) {
+    toggleModalVisibility('divAddCard', visible);
+}
+
+function toggleModalVisibility(elementId, visible) {
     const displayValue = visible ? 'block' : 'none';
-    const divOpenTemplate = document.getElementById('divOpenTemplate');
-    divOpenTemplate.style.display = displayValue;
+    const divModalElement = document.getElementById(elementId);
+    divModalElement.style.display = displayValue;
+}
+
+function createCardTemplateObj() {
+    return {
+        definition: 'mcf/card',
+        name: '',
+        properties: {
+            label: ''
+        },
+        regions: {
+            components: {
+                name: 'components',
+                components: [
+                    {
+                        definition: '',
+                        name: '',
+                        properties: {},
+                        regions: {
+                            components: {
+                                name: 'components',
+                                components: []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    };
 }

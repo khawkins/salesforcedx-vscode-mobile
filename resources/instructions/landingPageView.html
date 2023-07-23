@@ -55,13 +55,19 @@
             .action-links {
                 margin-bottom: 10px;
             }
+
+            #divCardTypeGlobal,
+            #divCardTypeList,
+            #divCardTypeTimedList {
+                display: none;
+            }
         </style>
     </head>
 
     <body>
         <h1>Landing Page Configuration</h1>
         <div class="action-links">
-            <a href="#">Add card...</a>
+            <a id="lnkAddCard" href="#">Add card...</a>
             <a id="lnkOpenTemplate" href="#">Open template...</a>
         </div>
         <div id="divLandingPageCards" class="card-container"></div>
@@ -93,6 +99,150 @@
                                 Open
                             </button>
                             <button type="button" id="btnCancelOpenTemplate">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal-container" id="divAddCard">
+            <div class="modal-content">
+                <div class="centering-box">
+                    <h2>Add a landing page card</h2>
+                    <form>
+                        <p>
+                            <label for="selCardTypes">Choose card type:</label>
+                        </p>
+                        <p>
+                            <select id="selCardTypes" required>
+                                <option selected>Choose...</option>
+                                <option value="global">
+                                    Global Action Card
+                                </option>
+                                <option value="list">Record List</option>
+                                <option value="timedList">
+                                    Timed Record List (records with start/end
+                                    times)
+                                </option>
+                            </select>
+                        </p>
+                        <div id="divCardTypeGlobal">
+                            <a id="lnkAddGlobalActionApi" href="#">
+                                Add Global Action API
+                            </a>
+                            <p>
+                                <label for="txtGlobalActionApi1">
+                                    Global Action API:
+                                </label>
+                                <input id="txtGlobalActionApi1" type="text" />
+                            </p>
+                        </div>
+                        <div id="divCardTypeList">
+                            <p>
+                                <label for="txtListCardLabel">Label:</label>
+                                <input id="txtListCardLabel" type="text" />
+                            </p>
+                            <p>
+                                <label for="selListCardObjectApi">Object API Name:</label>
+                                <select id="selListCardObjectApi">
+                                    <option selected>Select Object...</option>
+                                    <option value="account">Account</option>
+                                    <option value="contact">Contact</option>
+                                    <option value="case">Case</option>
+                                </select>
+                            </p>
+                            <p>
+                                <label for="selListCardMainField">Main Field:</label>
+                                <select id="selListCardMainField">
+                                    <option selected>Select main field...</option>
+                                    <!-- TODO: Dynamically mock fields per object -->
+                                </select>
+                            </p>
+                            <p>
+                                <label for="selListCardSubfield1">Subfield 1:</label>
+                                <select id="selListCardSubfield1">
+                                    <option selected>Select first subfield...</option>
+                                    <!-- TODO: Dynamically mock fields per object -->
+                                </select>
+                            </p>
+                            <p>
+                                <label for="selListCardSubfield2">Subfield 2:</label>
+                                <select id="selListCardSubfield2">
+                                    <option selected>Select second subfield...</option>
+                                    <!-- TODO: Dynamically mock fields per object -->
+                                </select>
+                            </p>
+                            <p>
+                                <label for="selListCardOrder">Order:</label>
+                                <select id="selListCardOrder">
+                                    <option>Ascending</option>
+                                    <option>Descending</option>
+                                </select>
+                            </p>
+                        </div>
+                        <div id="divCardTypeTimedList">
+                            <p>
+                                <label for="txtTimedListCardLabel">Label:</label>
+                                <input id="txtTimedListCardLabel" type="text" />
+                            </p>
+                            <p>
+                                <label for="selTimedListCardObjectApi">Object API Name:</label>
+                                <select id="selTimedListCardObjectApi">
+                                    <option selected>Select Object...</option>
+                                    <option value="account">Account</option>
+                                    <option value="contact">Contact</option>
+                                    <option value="case">Case</option>
+                                </select>
+                            </p>
+                            <p>
+                                <label for="selTimedListCardMainField">Main Field:</label>
+                                <select id="selTimedListCardMainField">
+                                    <option selected>Select main field...</option>
+                                    <!-- TODO: Dynamically mock fields per object -->
+                                </select>
+                            </p>
+                            <p>
+                                <label for="selTimedListCardSubfield1">Subfield 1:</label>
+                                <select id="selTimedListCardSubfield1">
+                                    <option selected>Select first subfield...</option>
+                                    <!-- TODO: Dynamically mock fields per object -->
+                                </select>
+                            </p>
+                            <p>
+                                <label for="selTimedListCardSubfield2">Subfield 2:</label>
+                                <select id="selTimedListCardSubfield2">
+                                    <option selected>Select second subfield...</option>
+                                    <!-- TODO: Dynamically mock fields per object -->
+                                </select>
+                            </p>
+                            <p>
+                                <label for="selTimedListCardStartTime">Start Time:</label>
+                                <select id="selTimedListCardStartTime">
+                                    <option selected>Select start time field...</option>
+                                    <!-- TODO: Dynamically mock fields per object -->
+                                </select>
+                            </p>
+                            <p>
+                                <label for="selTimedListCardEndTime">End Time:</label>
+                                <select id="selTimedListCardEndTime">
+                                    <option selected>Select end time field...</option>
+                                    <!-- TODO: Dynamically mock fields per object -->
+                                </select>
+                            </p>
+                            <p>
+                                <label for="selTimedListCardOrder">Order:</label>
+                                <select id="selTimedListCardOrder">
+                                    <option>Ascending</option>
+                                    <option>Descending</option>
+                                </select>
+                            </p>
+                        </div>
+                        <div class="button-container">
+                            <button type="button" id="btnAddCard">
+                                Add Card
+                            </button>
+                            <button type="button" id="btnCancelAddCard">
                                 Cancel
                             </button>
                         </div>
