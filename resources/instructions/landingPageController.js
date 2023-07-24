@@ -69,7 +69,6 @@ function rerenderLandingPage() {
                         document.createTextNode('List')
                     );
                     cardDivElement.appendChild(cardTypeElement);
-                    console.log(`${titleText} is a 'mcf-list' component`);
                     addMcfListItems(cardComponentSubComponents, cardDivElement);
                     break;
                 case 'mcfp/actionList':
@@ -78,9 +77,6 @@ function rerenderLandingPage() {
                         document.createTextNode('Global Actions')
                     );
                     cardDivElement.appendChild(cardTypeElement);
-                    console.log(
-                        `${titleText} is a 'mcfp/actionList' component`
-                    );
                     addGlobalActionItems(
                         cardComponentSubComponents,
                         cardDivElement
@@ -92,7 +88,6 @@ function rerenderLandingPage() {
                         document.createTextNode('Timed List')
                     );
                     cardDivElement.appendChild(cardTypeElement);
-                    console.log(`${titleText} is a 'mcf/timedList' component`);
                     addMcfListItems(cardComponentSubComponents, cardDivElement);
                     break;
             }
@@ -244,6 +239,11 @@ lnkAddCard.addEventListener('click', () => {
     toggleAddCardModalVisibility(true);
 });
 
+const lnkSaveLandingPage = document.getElementById('lnkSaveLandingPage');
+lnkSaveLandingPage.addEventListener('click', () => {
+    vscode.postMessage({ saveLandingPage: landingPage });
+});
+
 const btnCancelAddCard = document.getElementById('btnCancelAddCard');
 btnCancelAddCard.addEventListener('click', () => {
     toggleAddCardModalVisibility(false);
@@ -348,7 +348,45 @@ function addGlobalCard() {
     );
 }
 
-function addListCard() {}
+const txtListCardLabel = document.getElementById('txtListCardLabel');
+function addListCard() {
+    const newCard = createCardTemplateObj();
+    newCard.name = 'change_this_to_label_name';
+    newCard.properties.label = txtListCardLabel.value;
+    newCard.regions.components.components[0].definition = 'mcf/list';
+    newCard.regions.components.components[0].name = `${selListCardObjectApi.value}_list`;
+    const selectedObjectApiIndex = selListCardObjectApi.selectedIndex;
+    const selectedObjectApiOption =
+        selListCardObjectApi.options[selectedObjectApiIndex];
+    newCard.regions.components.components[0].properties.objectApiName =
+        selectedObjectApiOption.textContent;
+
+    const fieldMapObj = {};
+    if (selListCardMainField.selectedIndex > 0) {
+        fieldMapObj.mainField = selListCardMainField.value;
+    }
+    if (selListCardSubfield1.selectedIndex > 0) {
+        fieldMapObj.subField1 = selListCardSubfield1.value;
+    }
+    if (selListCardSubfield2.selectedIndex > 0) {
+        fieldMapObj.subField2 = selListCardSubfield2.value;
+    }
+    newCard.regions.components.components[0].properties.fieldMap = fieldMapObj;
+
+    const regionComponent = {
+        definition: 'mcf/recordRow',
+        name: 'record_row',
+        properties: {},
+        regions: {}
+    };
+    newCard.regions.components.components[0].regions.components.components.push(
+        regionComponent
+    );
+
+    landingPage.view.regions.components.components[0].regions.components.components.push(
+        newCard
+    );
+}
 
 function addTimedListCard() {}
 

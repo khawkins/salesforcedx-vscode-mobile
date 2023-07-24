@@ -45,6 +45,17 @@ export class LandingPageWebviewProvider {
                     command: 'importLandingPage',
                     payload: JSON.parse(landingPageJsonString)
                 });
+            } else if (data.saveLandingPage) {
+                const landingPagePath = this.getLandingPageContentPath(
+                    LANDING_PAGE_FILENAME
+                );
+                if (landingPagePath) {
+                    fs.writeFileSync(
+                        landingPagePath,
+                        JSON.stringify(data.saveLandingPage, null, 2)
+                    );
+                }
+                panel.dispose();
             }
         });
 
@@ -91,22 +102,27 @@ export class LandingPageWebviewProvider {
         });
     }
 
-    getLandingPageContent(landingPageFilename: string): string | null {
+    getLandingPageContentPath(landingPageFilename: string): string | null {
         const workspaceFolders = vscode.workspace.workspaceFolders;
         if (workspaceFolders && workspaceFolders.length > 0) {
             const workspacePath = workspaceFolders[0].uri.fsPath;
-            const landingPagePath = path.join(
+            return path.join(
                 workspacePath,
                 STATIC_RESOURCES_PATH,
                 landingPageFilename
             );
-            if (fs.existsSync(landingPagePath)) {
-                return fs.readFileSync(landingPagePath, {
-                    encoding: 'utf-8'
-                });
-            } else {
-                return null;
-            }
+        } else {
+            return null;
+        }
+    }
+
+    getLandingPageContent(landingPageFilename: string): string | null {
+        const landingPagePath =
+            this.getLandingPageContentPath(landingPageFilename);
+        if (landingPagePath && fs.existsSync(landingPagePath)) {
+            return fs.readFileSync(landingPagePath, {
+                encoding: 'utf-8'
+            });
         } else {
             return null;
         }
