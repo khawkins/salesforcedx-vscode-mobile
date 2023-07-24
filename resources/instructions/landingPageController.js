@@ -7,13 +7,13 @@
 
 const vscode = acquireVsCodeApi();
 
-const topLevel = this;
+let landingPage = {};
 
 window.addEventListener('message', (event) => {
     const message = event.data;
     switch (message.command) {
         case 'importLandingPage':
-            topLevel.landingPage = message.payload;
+            landingPage = message.payload;
             rerenderLandingPage();
             break;
     }
@@ -22,7 +22,6 @@ window.addEventListener('message', (event) => {
 function rerenderLandingPage() {
     const cardContainerElement = document.getElementById('divLandingPageCards');
     cardContainerElement.innerHTML = '';
-    const landingPage = topLevel.landingPage;
     if (
         landingPage &&
         landingPage.view &&
@@ -31,15 +30,14 @@ function rerenderLandingPage() {
         landingPage.view.regions.components.components &&
         landingPage.view.regions.components.components.length > 0 &&
         landingPage.view.regions.components.components[0].regions &&
-        landingPage.view.regions.components.components[0].regions
+        landingPage.view.regions.components.components[0].regions.components &&
+        landingPage.view.regions.components.components[0].regions.components
             .components &&
-        landingPage.view.regions.components.components[0].regions
-            .components.components &&
-        landingPage.view.regions.components.components[0].regions
-            .components.components.length > 0
+        landingPage.view.regions.components.components[0].regions.components
+            .components.length > 0
     ) {
-        for (cardComponent of landingPage.view.regions.components
-            .components[0].regions.components.components) {
+        for (cardComponent of landingPage.view.regions.components.components[0]
+            .regions.components.components) {
             // Create card div.
             const cardDivElement = document.createElement('div');
             const classAttr = document.createAttribute('class');
@@ -280,6 +278,39 @@ selCardTypes.addEventListener('change', () => {
     }
 });
 
+const selListCardObjectApi = document.getElementById('selListCardObjectApi');
+const selListCardMainField = document.getElementById('selListCardMainField');
+const selListCardSubfield1 = document.getElementById('selListCardSubfield1');
+const selListCardSubfield2 = document.getElementById('selListCardSubfield2');
+selListCardObjectApi.addEventListener('change', () => {
+    const objectPropertyMap = {
+        account: ['Name', 'AnnualRevenue', 'Industry', 'Id', 'Phone'],
+        contact: ['Name', 'Title', 'MobilePhone', 'Email'],
+        case: ['Subject', 'Status']
+    };
+
+    for (selFieldElement of [
+        selListCardMainField,
+        selListCardSubfield1,
+        selListCardSubfield2
+    ]) {
+        // Remove all of the main field, subfield1, and subfield2 existing options.
+        const options = selFieldElement.querySelectorAll('option');
+        for (let i = options.length - 1; i > 0; i--) {
+            options[i].remove();
+        }
+
+        // Add the new field options to each field selector.
+        const newOptions = objectPropertyMap[selListCardObjectApi.value];
+        for (let i = 0; i < newOptions.length; i++) {
+            const newOption = document.createElement('option');
+            newOption.value = newOptions[i];
+            newOption.textContent = newOptions[i];
+            selFieldElement.appendChild(newOption);
+        }
+    }
+});
+
 const btnAddCard = document.getElementById('btnAddCard');
 btnAddCard.addEventListener('click', () => {
     for (cardType of [
@@ -289,6 +320,7 @@ btnAddCard.addEventListener('click', () => {
     ]) {
         if (cardType.element.style.display === 'block') {
             cardType.method();
+            rerenderLandingPage();
             break;
         }
     }
@@ -296,8 +328,6 @@ btnAddCard.addEventListener('click', () => {
 });
 
 function addGlobalCard() {
-    const landingPage = topLevel.landingPage;
-    console.log(`Original landingPage: ${JSON.stringify(landingPage)}`);
     const newCard = createCardTemplateObj();
     newCard.name = 'global_actions';
     newCard.properties.label = 'Global Actions';
@@ -316,7 +346,6 @@ function addGlobalCard() {
     landingPage.view.regions.components.components[0].regions.components.components.push(
         newCard
     );
-    console.log(`Resultant landingPage: ${JSON.stringify(landingPage, null, 2)}`);
 }
 
 function addListCard() {}
